@@ -75,8 +75,61 @@
 <!-- will start from here -->
 https://www.coursera.org/learn/os-pku/lecture/jJSlc/jin-cheng-kong-zhi
 
+## 进程控制
+- 原语（ primitive ）
+  - 完成某种特定功能的一段程序，具有原子性，联系，不可中断
+- 进程创建
+  - id, PCB
+  - 分配内存地址
+  - 初始化
+  - 设置相应的队列
+    - Unix: fork/exec
+    - Win: CreateProcess
+- 结束进程
+  - 回收资源
+  - 撤销 PCB
+    - Unix: exit
+    - Win: TerminateProcess
+- 进程阻塞
+  - Unix: wait
+  - Win: WaitForSingleObject
+- Unix 的 fork() 实现
+  - 为子进程分配一个空闲的进程描述符 PCB（数据结构为 proc 结构）
+  - 分配 pid 给子进程
+  - 以一次一页的方式复制父进程地址空间
+    - 这样做是有弊端的，因为子进程很可能不需要父进程的资源，所以 Unix 的 Fork 会花费比较多的时间
+    - Linux 采用写时肤质技术 COW（ Copy-On-Write ）加快创建进程，只是传递指针，并且是只读
+      - 只有写的时候才把父进程的数据复制到子进程
+  - 从父进程继承共享资源，比如打开文件，和当前的工作目录
+  - 将子进程状态设置为就绪，插入到队列
+  - 对子进程返回标识符 0
+  - 向父进程返回子进程的 pid
 
+```c
+// fork() 实例
+#include <sys/types.h>
+#include <studio.h>
+#include <unistd.h>
 
+void main(int argc, char *argv[])
+{
+  pid_t pid;
+
+  pid = fork();
+  if (pid < 0) {
+    fprintf(stderr, "fork failed");
+    exit(-1);
+  }
+  else if (pid == 0) {  // 子进程
+    execlp(...)
+  }
+  else {  // 父进程
+    wait(NULL);  // 等待子进程结束
+    printf("child complete);
+    exit(0);
+  }
+}
+```
 
 
 
