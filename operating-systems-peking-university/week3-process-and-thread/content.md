@@ -76,7 +76,7 @@
 https://www.coursera.org/learn/os-pku/lecture/jJSlc/jin-cheng-kong-zhi
 
 ## 进程控制
-- 原语（ primitive ）
+- 原语（ primitive or atomic action ）
   - 完成某种特定功能的一段程序，具有原子性，联系，不可中断
 - 进程创建
   - id, PCB
@@ -85,7 +85,7 @@ https://www.coursera.org/learn/os-pku/lecture/jJSlc/jin-cheng-kong-zhi
   - 设置相应的队列
     - Unix: fork/exec
     - Win: CreateProcess
-- 结束进程
+- 结束进程 / 撤销
   - 回收资源
   - 撤销 PCB
     - Unix: exit
@@ -93,6 +93,7 @@ https://www.coursera.org/learn/os-pku/lecture/jJSlc/jin-cheng-kong-zhi
 - 进程阻塞
   - Unix: wait
   - Win: WaitForSingleObject
+- 唤醒
 - Unix 的 fork() 实现
   - 为子进程分配一个空闲的进程描述符 PCB（数据结构为 proc 结构）
   - 分配 pid 给子进程
@@ -131,15 +132,56 @@ void main(int argc, char *argv[])
 }
 ```
 
+## 关于进程的讨论
+- 进程的分类
+  - 系统进程，优先级比较高
+  - 用户进程
+  - 前台进程
+  - 后台进程
+  - CPU 密集型进程
+  - I/O 密集型进程
+- 进程层次结构
+  - UNIX 进程家族树：init 为根
+  - Windows 进程比较平等
 
 
+## 线程
 
+- 为何需要线程
+  - 应用的需要
+    - 比如文字排版，存储，编辑，比如 Android 的网络请求
+    - Web 服务器，
+  - 开销的考虑
+    - 快
+    - 少
+    - 无需动用内核
+    - 共享同一个进程的内存空间
 
+- 进程
+  - 资源的拥有者
+  - CPU 调度单位
+    - 线程继承了 CPU 的调度
 
-
-
-
-
-
+## 线程的实现
+- 用户级线程
+  - POSIX 线程库 - PTHREAD
+    - POSIX( Portable Operating System Interface )
+    - 多线程编程接口，以线程库的方式提供给用户
+      - Pthread_create
+      - Pthread_exit
+      - Pthread_join
+      - pthread_yield
+        - 线程资源让出 CPU
+      - pthread_attr_init
+      - pthread_attr_destroy
+- 核心级线程
+  - 内核管理所有的线程，并向应用提供 API 接口
+  - 内核维护线程和进程
+  - 线程切换需要内核支持
+  - 以线程为基础进行调度
+- 混合
+  - 线程的创建在用户空间完成
+  - 线程调度等在核心态完成
+  - Solaris 系统采用这个方式
 
 
